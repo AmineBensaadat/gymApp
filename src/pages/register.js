@@ -1,12 +1,13 @@
-// src/pages/login.js
+// src/pages/register.js
 
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { login } from '../services/authService'; // Assuming you created the authService
+import { register } from '../services/authService'; // Assuming you create a register service
 
-export default function Login() {
+export default function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -16,21 +17,25 @@ export default function Login() {
     setLoading(true);
     setError('');
 
+    // Basic validation for matching passwords
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const user = await login(username, password);
-      // Store user info or token (e.g., in localStorage or context)
-      localStorage.setItem('user', JSON.stringify(user));
-      router.push('/dashboard'); // Redirect to dashboard after successful login
+      await register(username, password); // Call the register service
+      router.push('/login'); // Redirect to login page after successful registration
     } catch (err) {
-      setError('Invalid username or password');
-    } finally {
+      setError('Registration failed');
       setLoading(false);
     }
   };
 
   return (
     <div className="max-w-sm mx-auto mt-10 p-6 border border-gray-300 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-semibold text-center mb-6">Gym Management System</h2>
+      <h2 className="text-2xl font-semibold text-center mb-6">Register</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="username" className="block text-sm font-medium text-gray-700">
@@ -60,6 +65,20 @@ export default function Login() {
           />
         </div>
 
+        <div className="mb-4">
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded mt-2"
+            required
+          />
+        </div>
+
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
         <button
@@ -67,14 +86,9 @@ export default function Login() {
           className={`w-full p-2 bg-blue-500 text-white rounded ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           disabled={loading}
         >
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? 'Registering...' : 'Register'}
         </button>
       </form>
-
-      <div className="mt-4 text-center">
-        <p>Don't have an account?</p>
-        <a href="/register" className="text-blue-500 hover:underline">Register here</a>
-      </div>
     </div>
   );
 }
