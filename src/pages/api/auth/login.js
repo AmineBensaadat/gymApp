@@ -29,9 +29,17 @@ export default async function handler(req, res) {
         process.env.JWT_SECRET || 'your_jwt_secret_key', // Set your JWT secret in .env
         { expiresIn: '1h' } // Token expiration time
       );
-
-      // Send token as response
-      res.status(200).json({ message: 'Login successful', token });
+      // Send response with token and user info (excluding sensitive data like password)
+    return res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        // add any other non-sensitive fields here
+      },
+    });
     } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ message: 'Internal Server Error' });

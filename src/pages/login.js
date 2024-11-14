@@ -1,6 +1,6 @@
 // src/pages/login.js
 import { useState } from 'react';
-import { CCard, CCardBody, CCardFooter, CForm, CFormInput, CButton, CContainer, CRow, CCol } from '@coreui/react';
+import { CCard, CCardBody, CCardFooter, CForm, CFormInput, CButton, CContainer, CRow, CCol, CCardGroup } from '@coreui/react';
 import { CIcon } from '@coreui/icons-react';
 import { cilLockLocked, cilUser } from '@coreui/icons';
 import { useRouter } from 'next/router';
@@ -14,16 +14,20 @@ const LoginPage = () => {
   const router = useRouter();
 
   const handleSubmit = async (e) => {
-    console.log(15)
+  
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const user = await login(username, password);
+      const response = await login(username, password);
       // Store user info or token (e.g., in localStorage or context)
-      localStorage.setItem('user', JSON.stringify(user));
-      router.push('/dashboard'); // Redirect to dashboard after successful login
+      const token = response.token;
+      localStorage.setItem('user', JSON.stringify(response));
+      localStorage.setItem('authToken', token); // Store the token in localStorage
+      if (token) {
+        window.location.href = '/dashboard'; // Redirect to dashboard after login
+      }
     } catch (err) {
       setError('Invalid username or password');
     } finally {

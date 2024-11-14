@@ -7,8 +7,8 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user) {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
       router.push('/login'); // Redirect to login if no user is found
     } else {
       router.push('/dashboard'); // Redirect to dashboard if user is logged in
