@@ -17,9 +17,8 @@ import { sygnet } from '/src/assets/brand/sygnet'
 // sidebar nav config
 // import navigation from '../_nav'
 
-const AppSidebar = () => {
+const AppSidebar = ({ sidebarShow, setSidebarShow }) => {
   // Local state for sidebar
-  const [sidebarShow, setSidebarShow] = useState(true)
   const [unfoldable, setUnfoldable] = useState(false)
 
   return (
